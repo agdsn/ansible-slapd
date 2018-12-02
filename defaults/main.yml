@@ -206,23 +206,11 @@ slapd_pki_ciphers: 'SECURE256:-VERS-SSL3.0'
 # servers to the same set of passwords.
 
 
-# .. envvar:: slapd_config_admin_basepw
-#
-# Base path to BaseDN administrator (``cn=admin,cn=config``) password.
-slapd_config_admin_basepw: '{{ secret + "/credentials/" + ansible_fqdn + "/slapd/cn=config/cn=admin,cn=config" }}'
-
-
 # .. envvar:: slapd_config_admin_password
 #
-# Path for the plaintext password of BaseDN administrator
+# Plaintext password of BaseDN administrator
 # (``cn=admin,cn=config``).
-slapd_config_admin_password: '{{ slapd_config_admin_basepw + ".password" }}'
-
-
-# .. envvar:: slapd_config_admin_hash
-#
-# Path for the hash of BaseDN administrator (``cn=admin,cn=config``) password.
-slapd_config_admin_hash: '{{ slapd_config_admin_basepw + ".hash" }}'
+# slapd_config_admin_password: 'secret'
 
 
 # .. envvar:: slapd_basedn_admin
@@ -231,29 +219,10 @@ slapd_config_admin_hash: '{{ slapd_config_admin_basepw + ".hash" }}'
 slapd_basedn_admin: '{{ "cn=admin," + slapd_basedn }}'
 
 
-# .. envvar:: slapd_basedn_admin_basepw
-#
-# Base path to BaseDN administrator password.
-slapd_basedn_admin_basepw: '{{ secret + "/slapd/credentials/" + slapd_basedn + "/" + slapd_basedn_admin }}'
-
-
 # .. envvar:: slapd_basedn_admin_password
 #
-# Path for the plaintext password of BaseDN administrator.
-slapd_basedn_admin_password: '{{ slapd_basedn_admin_basepw + ".password" }}'
-
-
-# .. envvar:: slapd_basedn_admin_hash
-#
-# Path for the hash of BaseDN administrator password.
-slapd_basedn_admin_hash: '{{ slapd_basedn_admin_basepw + ".hash" }}'
-
-
-# .. envvar:: slapd_basedn_admin_ansible_password
-#
-# Location of the Ansible password file for LDAP admin access. See the
-# ``debops.secret`` role for more details.
-slapd_basedn_admin_ansible_password: '{{ secret_ldap_admin_password }}'
+# Plaintext password of BaseDN administrator.
+# slapd_basedn_admin_password: 'secret'
 
 
 # .. ldapscripts configuration [[[1
@@ -313,10 +282,10 @@ slapd_ldapscripts_binddn: '{{ slapd_basedn_admin }}'
 slapd_ldapscripts_bindpwdfile: '/etc/ldapscripts/ldapscripts.passwd'
 
 
-# .. envvar:: slapd_ldapscripts_password_lookup
+# .. envvar:: slapd_ldapscripts_password
 #
-# Where to look for admin account password.
-slapd_ldapscripts_password_lookup: '{{ slapd_basedn_admin_password }}'
+# Admin account password for ldapscripts.
+slapd_ldapscripts_password: '{{ slapd_basedn_admin_password }}'
 
 
 # .. envvar:: slapd_ldapscripts_gidstart
