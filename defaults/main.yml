@@ -407,6 +407,13 @@ slapd_ldap_security_tls:
   - 'tls=128'
 
 
+# .. envvar:: slapd_ldap_local_ssf
+#
+# Specifies the Security Strength Factor (SSF) to be given local LDAP
+# sessions, such as those to the ldapi:// listener.
+slapd_ldap_local_ssf: '{{ "128" if slapd_pki | bool else "71" }}'
+
+
 # .. LDAP Access Control List [[[1
 #
 # ----------------------------

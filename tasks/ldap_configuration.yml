@@ -1,4 +1,10 @@
 ---
+- name: Configure LDAP Local SSF
+  ldap_attr:
+    dn: 'cn=config'
+    name: 'olcLocalSSF'
+    values: '{{ slapd_ldap_local_ssf }}'
+    state: 'exact'
 
 - name: Configure LDAP connection security
   ldap_attr:
