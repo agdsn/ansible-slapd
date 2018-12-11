@@ -11,7 +11,8 @@
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     name: 'olcSecurity'
     values: '{{ slapd_ldap_security }}'
-    state: 'present'
+    state: 'exact'
+  notify: [ 'Restart slapd' ]
 
 - name: Configure LDAP indices
   ldap_attr:
