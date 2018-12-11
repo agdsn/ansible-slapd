@@ -1,0 +1,9 @@
+###
+# Extracted from: http://tools.ietf.org/html/draft-howard-rfc2307bis-02
+###
+
+objectClass ( 1.3.6.1.1.1.2.18 NAME 'groupOfMembers' SUP top STRUCTURAL
+    DESC 'A group with members (DNs)'
+    MUST cn
+    MAY ( businessCategory $ seeAlso $ owner $ ou $ o $
+          description $ member ) )
