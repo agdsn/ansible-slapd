@@ -50,6 +50,12 @@ slapd_log_level: 'none'
 slapd_default_services: [ 'ldap:///', 'ldaps:///', 'ldapi:///' ]
 
 
+# .. envvar:: slapd_replication_syncprov
+#
+# Make database read only.
+slapd_read_only: False
+
+
 # .. Network access to OpenLDAP server [[[1
 #
 # -------------------------------------

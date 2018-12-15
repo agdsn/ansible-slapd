@@ -28,3 +28,9 @@
     values: '{{ lookup("template", "lookup/slapd_ldap_access_control_list.j2") | from_yaml }}'
     state: 'exact'
 
+- name: Configure LDAP read only flag
+  ldap_attr:
+    dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
+    name: 'olcReadOnly'
+    values: "{{ 'TRUE' if slapd_read_only else 'FALSE' }}"
+    state: 'exact'
