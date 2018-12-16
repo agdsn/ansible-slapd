@@ -56,6 +56,18 @@ slapd_default_services: [ 'ldap:///', 'ldaps:///', 'ldapi:///' ]
 slapd_read_only: False
 
 
+# .. envvar:: slapd_replication_syncprov
+#
+# Enable syncprov overlay.
+slapd_replication_syncprov: False
+
+
+# .. envvar:: slapd_replication_syncrepl
+#
+# Dictionary of syncrepl parameters.
+slapd_replication_syncrepl: {}
+
+
 # .. Network access to OpenLDAP server [[[1
 #
 # -------------------------------------

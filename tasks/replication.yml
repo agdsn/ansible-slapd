@@ -1,0 +1,25 @@
+---
+- name: Configure syncprov module
+  ldap_attr_ext:
+    dn: 'cn=module{0},cn=config'
+    name: 'olcModuleLoad'
+    values: 'syncprov'
+    state: "{{ 'present' if slapd_replication_syncprov else 'absent' }}"
+    indexed: yes
+
+- name: Configure syncprov overlay
+  ldap_entry_ext:
+    dn: 'olcOverlay=syncprov,olcDatabase={1}{{ slapd_backend }},cn=config'
+    objectClass: 'olcSyncProvConfig'
+    attributes:
+      olcOverlay: 'syncprov'
+      olcSpCheckpoint: '100 10'
+    state: "{{ 'present' if slapd_replication_syncprov else 'absent' }}"
+    indexed: yes
+
+- name: Configure syncrepl
+  ldap_attr:
+    dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
+    name: 'olcSyncrepl'
+    values: "{{ '{0}' + (slapd_replication_syncrepl.items() | map('join', '=') | join(' ')) if slapd_replication_syncrepl else [] }}"
+    state: 'exact'

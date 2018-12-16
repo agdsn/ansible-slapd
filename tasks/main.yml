@@ -62,6 +62,8 @@
   with_dict:
     olcLogLevel: '{{ slapd_log_level }}'
 
+- include: replication.yml
+
 - name: Configure enabled services
   lineinfile:
     dest: '/etc/default/slapd'
