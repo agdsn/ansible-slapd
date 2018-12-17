@@ -482,6 +482,12 @@ slapd_ldap_access_control_list_default:
     by * none
 
 
+# .. envvar:: slapd_ldap_limits
+#
+# List of olcLimits attributes configured on the server.
+slapd_ldap_limits: []
+
+
 # .. envvar:: slapd_ferm_weight
 #
 # A prefix number added to the filename which helps order the firewall rules.

@@ -28,6 +28,13 @@
     values: '{{ lookup("template", "lookup/slapd_ldap_access_control_list.j2") | from_yaml }}'
     state: 'exact'
 
+- name: Configure LDAP limits
+  ldap_attr:
+    dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
+    name: 'olcLimits'
+    values: '{{ lookup("template", "lookup/slapd_ldap_limits.j2") | from_yaml }}'
+    state: 'exact'
+
 - name: Configure LDAP read only flag
   ldap_attr:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
