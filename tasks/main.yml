@@ -46,12 +46,13 @@
   changed_when: slapd_register_load_schema.stdout != ""
 
 - include: password_config_admin.yml
-- include: password_basedn_admin.yml
-- include: tls.yml
-- include: anonymous_bind.yml
 
 - include: ldap_configuration.yml
   tags: slapd-config
+
+- include: password_basedn_admin.yml
+- include: tls.yml
+- include: anonymous_bind.yml
 
 - name: Set slapd log level
   ldap_attr:
