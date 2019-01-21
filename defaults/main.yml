@@ -68,6 +68,12 @@ slapd_replication_syncprov: False
 slapd_replication_syncrepl: {}
 
 
+# .. envvar:: slapd_ppolicy
+#
+# Enable ppolicy overlay.
+slapd_ppolicy: False
+
+
 # .. Network access to OpenLDAP server [[[1
 #
 # -------------------------------------

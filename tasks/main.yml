@@ -64,6 +64,7 @@
     olcLogLevel: '{{ slapd_log_level }}'
 
 - include: replication.yml
+- include: ppolicy.yml
 
 - name: Configure enabled services
   lineinfile:

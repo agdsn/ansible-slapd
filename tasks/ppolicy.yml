@@ -1,0 +1,29 @@
+---
+- name: Load ppolicy schema
+  command: load-ldap-schema /etc/ldap/schema/ppolicy.ldif
+  register: slapd_register_load_schema
+  when: slapd_ppolicy
+  changed_when: slapd_register_load_schema.stdout != ""
+
+- name: Configure ppolicy module
+  ldap_attr_ext:
+    dn: 'cn=module{0},cn=config'
+    name: 'olcModuleLoad'
+    values: 'ppolicy'
+    state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
+    indexed: yes
+
+- name: Configure ppolicy overlay
+  ldap_entry_ext:
+    dn: 'olcOverlay=ppolicy,olcDatabase={1}{{ slapd_backend }},cn=config'
+    objectClass:
+      - 'olcOverlayConfig'
+      - 'olcPPolicyConfig'
+    attributes:
+      olcOverlay: 'ppolicy'
+      olcPPolicyDefault: 'cn=ppolicy,ou=policies,{{ slapd_basedn }}'
+      olcPPolicyHashCleartext: 'FALSE'
+      olcPPolicyUseLockout: 'FALSE'
+      olcPPolicyForwardUpdates: 'FALSE'
+    state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
+    indexed: yes
