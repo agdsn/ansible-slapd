@@ -13,11 +13,13 @@
   shell: ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config -s base 'olcTLSCertificateFile=*' olcTLSCertificateFile
   register: slapd_register_tls_cert_search
   changed_when: False
+  check_mode: no
 
 - name: Create random temporary directory for ldif file
   command: mktemp -d
   register: slapd_register_tempdir
   when: slapd_pki|d() and slapd_pki | bool and not (slapd_register_tls_cert_search.stdout | search("olcTLSCertificateFile:"))
+  check_mode: no
 
 - name: Prepare temporary ldif file
   template:
