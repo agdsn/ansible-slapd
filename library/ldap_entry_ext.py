@@ -64,6 +64,12 @@ options:
     description:
       - If true, index in leftmost dn component is ignored when testing for
         existing entries.
+  indexed_before:
+    description:
+      - List of leftmost rdn values that this entry is to placed before.
+  indexed_after:
+    description:
+      - List of leftmost rdn values that this entry is to placed after.
 extends_documentation_fragment: ldap.documentation
 """
 
@@ -112,6 +118,7 @@ RETURN = """
 # Default return values
 """
 
+import re
 import traceback
 
 from ansible.module_utils.basic import AnsibleModule
@@ -125,6 +132,20 @@ try:
     HAS_LDAP = True
 except ImportError:
     HAS_LDAP = False
+
+
+def _split_dn(dn):
+    edn = ldap.dn.explode_dn(dn)
+    return edn[0], ','.join(edn[1:])
+
+
+def _split_rdn(rdn):
+    rdn_attribute, rdn_value, _ = ldap.dn.str2dn(rdn)[0][0]
+    return rdn_attribute, rdn_value
+
+
+def _join_rdn(attribute, value):
+    return '{}={}'.format(attribute, value)
 
 
 class LdapEntry(LdapGeneric):
@@ -162,11 +183,46 @@ class LdapEntry(LdapGeneric):
         def _add():
             self.connection.add_s(self.dn, modlist)
 
-        if not self._is_entry_present():
-            modlist = ldap.modlist.addModlist(self.attrs)
-            action = _add
+        def _rename():
+            self.connection.rename_s(self.dn, newrdn)
+
+        if not self._has_index_constraints():
+            if not self._is_entry_present():
+                modlist = ldap.modlist.addModlist(self.attrs)
+                action = _add
+            else:
+                action = None
         else:
-            action = None
+            # Evaluate index constraints
+            self_index, min_index, max_index = self._get_indexes()
+            is_present = self_index is not None
+
+            if is_present and self_index >= min_index and (max_index is None or self_index <= max_index):
+                # Entry is present and index constraints are satisfied
+                action = None
+            else:
+                # Calculate optimal index
+                if max_index is not None:
+                    if min_index > max_index:
+                        self.module.fail_json(
+                            msg='Satisfying index constraints would require reordering of sibling entries.')
+                    index = max_index
+                else:
+                    index = None
+
+                # Derive indexed rdn
+                rdn, parent = _split_dn(self.dn)
+                if index is not None:
+                    rdn_attribute, rdn_value = _split_rdn(rdn)
+                    rdn = _join_rdn(rdn_attribute, '{{{index}}}{value}'.format(index=index, value=rdn_value))
+
+                if not is_present:
+                    self.dn = '{},{}'.format(rdn, parent)
+                    modlist = ldap.modlist.addModlist(self.attrs)
+                    action = _add
+                else:
+                    newrdn = rdn
+                    action = _rename
 
         return action
 
@@ -188,7 +244,8 @@ class LdapEntry(LdapGeneric):
                 self.connection.search_s(self.dn, ldap.SCOPE_BASE)
             else:
                 edn = ldap.dn.explode_dn(self.dn)
-                if not self.connection.search_s(','.join(edn[1:]), ldap.SCOPE_ONELEVEL, '({})'.format(edn[0])):
+                rdn, parent = _split_dn(self.dn)
+                if not self.connection.search_s(parent, ldap.SCOPE_ONELEVEL, '({})'.format(rdn)):
                     raise ldap.NO_SUCH_OBJECT
         except ldap.NO_SUCH_OBJECT:
             is_present = False
@@ -197,6 +254,34 @@ class LdapEntry(LdapGeneric):
 
         return is_present
 
+    def _has_index_constraints(self):
+        return self.module.params['indexed_before'] or self.module.params['indexed_after']
+
+    def _get_indexes(self):
+        indexed_before = self.module.params['indexed_before']
+        indexed_after = self.module.params['indexed_after']
+
+        rdn, parent = _split_dn(self.dn)
+        rdn_attribute, rdn_value = _split_rdn(rdn)
+        siblings = self.connection.search_s(parent, ldap.SCOPE_ONELEVEL, '({}=*)'.format(rdn_attribute))
+        siblings_indexes = {}
+        for sibling in siblings:
+            sibling_dn = sibling[0]
+            _, sibling_rdn_value = _split_rdn(sibling_dn)
+            match = re.match(r'\{(?P<index>\d+)\}(?P<value>.+)', sibling_rdn_value)
+            if not match:
+                self.module.fail_json(msg='Sibling entry {} does not have an indexed rdn.'.format(sibling_dn))
+            siblings_indexes[match.group('value')] = int(match.group('index'))
+
+        present_indexed_before = [siblings_indexes[e] for e in indexed_before if e in siblings_indexes]
+        max_index = max(present_indexed_before) if present_indexed_before else None
+
+        present_indexed_after = [siblings_indexes[e] for e in indexed_after if e in siblings_indexes]
+        min_index = min(present_indexed_after) + 1 if present_indexed_after else 0
+
+        self_index = siblings_indexes.get(rdn_value, None)
+
+        return self_index, min_index, max_index
 
 def main():
     module = AnsibleModule(
@@ -206,6 +291,8 @@ def main():
             params=dict(type='dict'),
             state=dict(default='present', choices=['present', 'absent']),
             indexed=dict(default=False, type='bool'),
+            indexed_before=dict(default=[], type='list'),
+            indexed_after=dict(default=[], type='list'),
         ),
         supports_check_mode=True,
     )
