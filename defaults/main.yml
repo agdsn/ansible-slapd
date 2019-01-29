@@ -74,6 +74,24 @@ slapd_replication_syncrepl: {}
 slapd_ppolicy: False
 
 
+# .. envvar:: slapd_memberof
+#
+# Enable memberof overlay.
+slapd_memberof: False
+
+
+# .. envvar:: slapd_memberof_group_oc
+#
+# Group objectClass.
+slapd_memberof_group_oc: 'groupOfNames'
+
+
+# .. envvar:: slapd_memberof_member_ad
+#
+# Member attribute.
+slapd_memberof_member_ad: 'member'
+
+
 # .. Network access to OpenLDAP server [[[1
 #
 # -------------------------------------

@@ -65,6 +65,7 @@
 
 - include: replication.yml
 - include: ppolicy.yml
+- include: memberof.yml
 
 - name: Configure enabled services
   lineinfile:

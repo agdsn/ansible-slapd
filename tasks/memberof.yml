@@ -1,0 +1,26 @@
+---
+- name: Configure memberof module
+  ldap_attr_ext:
+    dn: 'cn=module{0},cn=config'
+    name: 'olcModuleLoad'
+    values: 'memberof'
+    state: "{{ 'present' if slapd_memberof else 'absent' }}"
+    indexed: yes
+
+- name: Configure memberof overlay
+  ldap_entry_ext:
+    dn: 'olcOverlay=memberof,olcDatabase={1}{{ slapd_backend }},cn=config'
+    objectClass:
+      - 'olcMemberOf'
+      - 'olcOverlayConfig'
+    attributes:
+      olcOverlay: 'memberof'
+      olcMemberOfDangling: 'ignore'
+      olcMemberOfRefInt: 'TRUE'
+      olcMemberOfGroupOC: '{{ slapd_memberof_group_oc }}'
+      olcMemberOfMemberAD: '{{ slapd_memberof_member_ad }}'
+      olcMemberOfMemberOfAD: 'memberOf'
+    state: "{{ 'present' if slapd_memberof else 'absent' }}"
+    indexed: yes
+    indexed_after:
+      - 'syncprov'
