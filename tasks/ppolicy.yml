@@ -27,3 +27,5 @@
       olcPPolicyForwardUpdates: 'FALSE'
     state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
     indexed: yes
+    indexed_after:
+      - 'syncprov'
