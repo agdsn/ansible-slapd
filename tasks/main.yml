@@ -17,10 +17,12 @@
 
 - name: Install OpenLDAP packages
   apt:
-    name: '{{ item }}'
-    state: 'latest'
+    name:
+      - 'slapd'
+      - 'ldap-utils'
+      - 'python-ldap'
+    state: 'present'
     install_recommends: False
-  with_items: [ 'slapd', 'ldap-utils', 'python-ldap' ]
 
 - name: Install helper scripts
   copy:
