@@ -57,13 +57,12 @@
 - include: anonymous_bind.yml
 
 - name: Set slapd log level
-  ldap_attr:
+  ldap_attrs:
     dn: 'cn=config'
-    name: '{{ item.key }}'
-    values: '{{ item.value }}'
+    attributes:
+      olcLogLevel: '{{ slapd_log_level }}'
     state: 'exact'
-  with_dict:
-    olcLogLevel: '{{ slapd_log_level }}'
+
 
 - include: replication.yml
 - include: ppolicy.yml
@@ -89,4 +88,3 @@
     state: 'present'
     job: '/usr/local/sbin/slapd-snapshot {{ slapd_snapshot_period }} 30'
   when: slapd_snapshot|bool
-

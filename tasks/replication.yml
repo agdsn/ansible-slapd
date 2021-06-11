@@ -18,8 +18,8 @@
     indexed: yes
 
 - name: Configure syncrepl
-  ldap_attr:
+  ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
-    name: 'olcSyncrepl'
-    values: "{{ '{0}' + (slapd_replication_syncrepl.items() | map('join', '=') | join(' ')) if slapd_replication_syncrepl else [] }}"
+    attributes:
+      olcSyncrepl: "{{ '{0}' + (slapd_replication_syncrepl.items() | map('join', '=') | join(' ')) if slapd_replication_syncrepl else [] }}"
     state: 'exact'
