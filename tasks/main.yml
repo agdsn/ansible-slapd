@@ -20,7 +20,7 @@
     name:
       - 'slapd'
       - 'ldap-utils'
-      - 'python-ldap'
+      - 'python3-ldap'
     state: 'present'
     install_recommends: False
 
