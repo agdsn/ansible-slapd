@@ -170,6 +170,14 @@ except ImportError:
     HAS_LDAP = False
 
 
+def remove_index_from_value(value):
+    if isinstance(value, str):
+        return re.sub(r'^(\{\d+\})?', b'', value)
+    if isinstance(value, bytes):
+        return re.sub(rb'^(\{\d+\})?', b'', value)
+    raise ValueError(f"Cannot remove braces from non-str-like value {value!r}")
+
+
 class LdapAttr(LdapGeneric):
     def __init__(self, module):
         LdapGeneric.__init__(self, module)
@@ -188,7 +196,7 @@ class LdapAttr(LdapGeneric):
         if not self.module.params['indexed']:
             values_to_add = list(filter(self._is_value_absent, self.values))
         else:
-            current = [re.sub(r'^(\{\d+\})?', '', value) for value in self._get_current_values()]
+            current = [remove_index_from_value(value) for value in self._get_current_values()]
             values_to_add = [value for value in self.values if value not in current]
 
         if len(values_to_add) > 0:
