@@ -172,7 +172,7 @@ except ImportError:
 
 def remove_index_from_value(value):
     if isinstance(value, str):
-        return re.sub(r'^(\{\d+\})?', b'', value)
+        return re.sub(r'^(\{\d+\})?', '', value)
     if isinstance(value, bytes):
         return re.sub(rb'^(\{\d+\})?', b'', value)
     raise ValueError(f"Cannot remove braces from non-str-like value {value!r}")
