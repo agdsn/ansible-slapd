@@ -1,13 +1,13 @@
 ---
 - name: Configure LDAP Local SSF
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'cn=config'
     attributes:
       olcLocalSSF: '{{ slapd_ldap_local_ssf }}'
     state: 'exact'
 
 - name: Configure LDAP connection security
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     attributes:
       olcSecurity: '{{ slapd_ldap_security }}'
@@ -15,28 +15,28 @@
   notify: [ 'Restart slapd' ]
 
 - name: Configure LDAP indices
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     attributes:
       olcDbIndex: '{{ slapd_ldap_index }}'
     state: 'exact'
 
 - name: Configure LDAP Access Control List
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     attributes:
       olcAccess: '{{ lookup("template", "lookup/slapd_ldap_access_control_list.j2") | from_yaml }}'
     state: 'exact'
 
 - name: Configure LDAP limits
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     attributes:
       olcLimits: '{{ lookup("template", "lookup/slapd_ldap_limits.j2") | from_yaml }}'
     state: 'exact'
 
 - name: Configure LDAP read only flag
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     attributes:
       olcReadOnly: "{{ 'TRUE' if slapd_read_only else 'FALSE' }}"

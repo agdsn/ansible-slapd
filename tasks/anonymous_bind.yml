@@ -1,7 +1,7 @@
 ---
 
 - name: Allow anonymous bind
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'cn=config'
     attributes:
       olcDisallows: 'bind_anon'
@@ -10,7 +10,7 @@
   when: slapd_anonymous_bind|bool
 
 - name: Allow anonymous bind (frontend)
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={-1}frontend,cn=config'
     attributes:
       olcRequires: 'authc'
@@ -18,7 +18,7 @@
   when: slapd_anonymous_bind|bool
 
 - name: Deny anonymous bind, require authentication
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'cn=config'
     attributes:
       olcDisallows: 'bind_anon'
@@ -27,7 +27,7 @@
   when: not slapd_anonymous_bind|bool
 
 - name: Deny anonymous bind, require authentication (frontend)
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={-1}frontend,cn=config'
     attributes:
       olcRequires: 'authc'

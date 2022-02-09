@@ -57,7 +57,7 @@
 - include: anonymous_bind.yml
 
 - name: Set slapd log level
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'cn=config'
     attributes:
       olcLogLevel: '{{ slapd_log_level }}'

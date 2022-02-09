@@ -18,7 +18,7 @@
     indexed: yes
 
 - name: Configure syncrepl
-  ldap_attrs:
+  community.general.ldap_attrs:
     dn: 'olcDatabase={1}{{ slapd_backend }},cn=config'
     attributes:
       olcSyncrepl: "{{ '{0}' + (slapd_replication_syncrepl.items() | map('join', '=') | join(' ')) if slapd_replication_syncrepl else [] }}"
