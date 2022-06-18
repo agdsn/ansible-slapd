@@ -47,14 +47,14 @@
   when: slapd_ldap_schema is defined and slapd_ldap_schema
   changed_when: slapd_register_load_schema.stdout != ""
 
-- include: password_config_admin.yml
+- import_tasks: password_config_admin.yml
 
-- include: ldap_configuration.yml
+- import_tasks: ldap_configuration.yml
   tags: slapd-config
 
-- include: password_basedn_admin.yml
-- include: tls.yml
-- include: anonymous_bind.yml
+- import_tasks: password_basedn_admin.yml
+- import_tasks: tls.yml
+- import_tasks: anonymous_bind.yml
 
 - name: Set slapd log level
   community.general.ldap_attrs:
@@ -64,9 +64,9 @@
     state: 'exact'
 
 
-- include: replication.yml
-- include: ppolicy.yml
-- include: memberof.yml
+- import_tasks: replication.yml
+- import_tasks: ppolicy.yml
+- import_tasks: memberof.yml
 
 - name: Configure enabled services
   ansible.builtin.lineinfile:
@@ -76,7 +76,7 @@
     state: 'present'
   notify: ['Restart slapd']
 
-- include: ldapscripts.yml
+- include_tasks: ldapscripts.yml
   when: slapd_ldapscripts|bool
 
 - name: Create snapshot task in cron
