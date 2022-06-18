@@ -47,19 +47,19 @@ slapd_log_level: 'none'
 #
 # Default services enabled in :file:`/etc/default/slapd` (change requires
 # restart).
-slapd_default_services: [ 'ldap:///', 'ldaps:///', 'ldapi:///' ]
+slapd_default_services: ['ldap:///', 'ldaps:///', 'ldapi:///']
 
 
 # .. envvar:: slapd_replication_syncprov
 #
 # Make database read only.
-slapd_read_only: False
+slapd_read_only: false
 
 
 # .. envvar:: slapd_replication_syncprov
 #
 # Enable syncprov overlay.
-slapd_replication_syncprov: False
+slapd_replication_syncprov: false
 
 
 # .. envvar:: slapd_replication_syncrepl
@@ -71,13 +71,13 @@ slapd_replication_syncrepl: {}
 # .. envvar:: slapd_ppolicy
 #
 # Enable ppolicy overlay.
-slapd_ppolicy: False
+slapd_ppolicy: false
 
 
 # .. envvar:: slapd_memberof
 #
 # Enable memberof overlay.
-slapd_memberof: False
+slapd_memberof: false
 
 
 # .. envvar:: slapd_memberof_group_oc
@@ -136,7 +136,7 @@ slapd_tcpwrappers_default: 'ALL'
 #
 # Deny anonymous bind to the server by default and require authentication.
 # Set to ``True`` to allow anonymous bind.
-slapd_anonymous_bind: False
+slapd_anonymous_bind: false
 
 
 # .. slapd system configuration [[[1
@@ -149,12 +149,12 @@ slapd_anonymous_bind: False
 #
 # List of system groups to grant to 'openldap' user. 'ssl-cert' group is
 # required for access to private keys.
-slapd_append_groups: [ 'ssl-cert' ]
+slapd_append_groups: ['ssl-cert']
 
 # .. envvar:: slapd_snapshot
 #
 # Create snapshots of LDAP database periodically.
-slapd_snapshot: True
+slapd_snapshot: true
 
 
 # .. envvar:: slapd_snapshot_period
@@ -173,17 +173,17 @@ slapd_snapshot_period: 'weekly'
 #
 # Enable or disable support for certificates using the ``debops.pki`` role.
 slapd_pki: '{{ (ansible_local.pki.enabled
-                if (ansible_local|d() and ansible_local.pki|d() and
-                    ansible_local.pki.enabled|d())
-                else True) | bool }}'
+                if (ansible_local | d() and ansible_local.pki | d() and
+                    ansible_local.pki.enabled | d())
+                else true) | bool }}'
 
 
 # .. envvar:: slapd_pki_path
 #
 # Base PKI directory.
 slapd_pki_path: '{{ (ansible_local.pki.base_path
-                     if (ansible_local|d() and ansible_local.pki|d() and
-                         ansible_local.pki.base_path|d())
+                     if (ansible_local | d() and ansible_local.pki | d() and
+                         ansible_local.pki.base_path | d())
                      else "/etc/pki") }}'
 
 
@@ -191,8 +191,8 @@ slapd_pki_path: '{{ (ansible_local.pki.base_path
 #
 # Default PKI realm used by OpenLDAP.
 slapd_pki_realm: '{{ (ansible_local.pki.realm
-                      if (ansible_local|d() and ansible_local.pki|d() and
-                          ansible_local.pki.realm|d())
+                      if (ansible_local | d() and ansible_local.pki | d() and
+                          ansible_local.pki.realm | d())
                       else "system") }}'
 
 
@@ -225,8 +225,8 @@ slapd_dhparam_set: 'default'
 #
 # Absolute path to file with Diffie-Hellman parameters.
 slapd_dhparam_file: '{{ (ansible_local.dhparam[slapd_dhparam_set]
-                         if (ansible_local|d() and ansible_local.dhparam|d() and
-                             ansible_local.dhparam[slapd_dhparam_set]|d())
+                         if (ansible_local | d() and ansible_local.dhparam | d() and
+                             ansible_local.dhparam[slapd_dhparam_set] | d())
                          else "") }}'
 
 
@@ -279,7 +279,7 @@ slapd_basedn_admin: '{{ "cn=admin," + slapd_basedn }}'
 # .. envvar:: slapd_ldapscripts
 #
 # Enable :command:`ldapscripts` support.
-slapd_ldapscripts: False
+slapd_ldapscripts: false
 
 
 # .. envvar:: slapd_ldapscripts_server
@@ -524,10 +524,10 @@ slapd_ferm_weight: '40'
 slapd_ferm_dependent_rules:
 
   - type: 'accept'
-    protocol: [ 'tcp', 'udp' ]
-    dport: [ 'ldap', 'ldaps' ]
+    protocol: ['tcp', 'udp']
+    dport: ['ldap', 'ldaps']
     saddr: '{{ slapd_allow + slapd_group_allow + slapd_host_allow }}'
-    accept_any: True
+    accept_any: true
     weight: '{{ slapd_ferm_weight }}'
     role: 'slapd'
 
@@ -543,4 +543,3 @@ slapd_tcpwrappers_dependent_allow:
     weight: '50'
     filename: 'slapd_dependent_allow'
     comment: 'Allow connections to OpenLDAP'
-

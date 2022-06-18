@@ -1,16 +1,16 @@
 ---
 
 - name: Install ldapscripts packages
-  apt:
+  ansible.builtin.apt:
     name:
       - 'ldapscripts'
       - 'ldap-utils'
       - 'pwgen'
     state: 'present'
-    install_recommends: False
+    install_recommends: false
 
 - name: Configure ldapscripts
-  template:
+  ansible.builtin.template:
     src: 'etc/ldapscripts/ldapscripts.conf.j2'
     dest: '/etc/ldapscripts/ldapscripts.conf'
     owner: 'root'
@@ -18,11 +18,10 @@
     mode: '0644'
 
 - name: Configure ldapscripts password
-  template:
+  ansible.builtin.template:
     src: 'etc/ldapscripts/ldapscripts.passwd.j2'
     dest: '/etc/ldapscripts/ldapscripts.passwd'
     owner: 'root'
     group: 'root'
     mode: '0640'
-  no_log: True
-
+  no_log: true

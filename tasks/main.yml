@@ -1,31 +1,31 @@
 ---
 
 - name: Configure domain for OpenLDAP in debconf
-  debconf:
+  ansible.builtin.debconf:
     name: 'slapd'
     question: '{{ item }}'
     vtype: 'string'
     value: '{{ slapd_domain }}'
-  with_items: [ 'slapd/domain', 'shared/organization' ]
+  with_items: ['slapd/domain', 'shared/organization']
 
 - name: Configure database backend for OpenLDAP in debconf
-  debconf:
+  ansible.builtin.debconf:
     name: 'slapd'
     question: 'slapd/backend'
     vtype: 'string'
     value: '{{ slapd_backend | upper }}'
 
 - name: Install OpenLDAP packages
-  apt:
+  ansible.builtin.apt:
     name:
       - 'slapd'
       - 'ldap-utils'
       - 'python3-ldap'
     state: 'present'
-    install_recommends: False
+    install_recommends: false
 
 - name: Install helper scripts
-  copy:
+  ansible.builtin.copy:
     src: 'usr/local/sbin/'
     dest: '/usr/local/sbin/'
     owner: 'root'
@@ -33,7 +33,7 @@
     mode: '0755'
 
 - name: Copy custom LDAP schema files
-  copy:
+  ansible.builtin.copy:
     src: 'usr/local/etc/ldap/schema/'
     dest: '/usr/local/etc/ldap/schema/'
     owner: 'root'
@@ -41,7 +41,7 @@
     mode: '0644'
 
 - name: Load custom LDAP schema files
-  command: load-ldap-schema {{ item }}
+  ansible.builtin.command: load-ldap-schema {{ item }}
   with_items: '{{ slapd_ldap_schema }}'
   register: slapd_register_load_schema
   when: slapd_ldap_schema is defined and slapd_ldap_schema
@@ -69,18 +69,18 @@
 - include: memberof.yml
 
 - name: Configure enabled services
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: '/etc/default/slapd'
     regexp: '^SLAPD_SERVICES='
     line: 'SLAPD_SERVICES="{{ slapd_default_services | join(" ") }}"'
     state: 'present'
-  notify: [ 'Restart slapd' ]
+  notify: ['Restart slapd']
 
 - include: ldapscripts.yml
   when: slapd_ldapscripts|bool
 
 - name: Create snapshot task in cron
-  cron:
+  ansible.builtin.cron:
     name: 'Create snapshots of OpenLDAP database'
     special_time: '{{ slapd_snapshot_period }}'
     cron_file: 'ansible_slapd-snapshot'

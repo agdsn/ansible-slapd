@@ -12,7 +12,7 @@
     attributes:
       olcSecurity: '{{ slapd_ldap_security }}'
     state: 'exact'
-  notify: [ 'Restart slapd' ]
+  notify: ['Restart slapd']
 
 - name: Configure LDAP indices
   community.general.ldap_attrs:

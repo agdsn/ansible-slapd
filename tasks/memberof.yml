@@ -5,7 +5,7 @@
     name: 'olcModuleLoad'
     values: 'memberof'
     state: "{{ 'present' if slapd_memberof else 'absent' }}"
-    indexed: yes
+    indexed: true
 
 - name: Configure memberof overlay
   ldap_entry_ext:
@@ -21,6 +21,6 @@
       olcMemberOfMemberAD: '{{ slapd_memberof_member_ad }}'
       olcMemberOfMemberOfAD: 'memberOf'
     state: "{{ 'present' if slapd_memberof else 'absent' }}"
-    indexed: yes
+    indexed: true
     indexed_after:
       - 'syncprov'

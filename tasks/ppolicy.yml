@@ -1,6 +1,6 @@
 ---
 - name: Load ppolicy schema
-  command: load-ldap-schema /etc/ldap/schema/ppolicy.ldif
+  ansible.builtin.command: load-ldap-schema /etc/ldap/schema/ppolicy.ldif
   register: slapd_register_load_schema
   when: slapd_ppolicy
   changed_when: slapd_register_load_schema.stdout != ""
@@ -11,7 +11,7 @@
     name: 'olcModuleLoad'
     values: 'ppolicy'
     state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
-    indexed: yes
+    indexed: true
 
 - name: Configure ppolicy overlay
   ldap_entry_ext:
@@ -26,6 +26,6 @@
       olcPPolicyUseLockout: 'FALSE'
       olcPPolicyForwardUpdates: 'FALSE'
     state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
-    indexed: yes
+    indexed: true
     indexed_after:
       - 'syncprov'

@@ -5,7 +5,7 @@
     name: 'olcModuleLoad'
     values: 'syncprov'
     state: "{{ 'present' if slapd_replication_syncprov else 'absent' }}"
-    indexed: yes
+    indexed: true
 
 - name: Configure syncprov overlay
   ldap_entry_ext:
@@ -15,7 +15,7 @@
       olcOverlay: 'syncprov'
       olcSpCheckpoint: '100 10'
     state: "{{ 'present' if slapd_replication_syncprov else 'absent' }}"
-    indexed: yes
+    indexed: true
 
 - name: Configure syncrepl
   community.general.ldap_attrs:
