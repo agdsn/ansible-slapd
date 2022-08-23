@@ -28,7 +28,7 @@ slapd_basedn: '{{ "dc=" + slapd_domain.split(".") | join(",dc=") }}'
 # .. envvar:: slapd_backend
 #
 # Specify database backend to use.
-slapd_backend: '{{ "hdb" if (ansible_distribution_release in [ "wheezy", "precise" ])
+slapd_backend: '{{ "hdb" if (ansible_distribution_release in ["wheezy", "precise"])
                          else "mdb" }}'
 
 # .. envvar:: slapd_password_length
