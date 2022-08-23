@@ -38,8 +38,8 @@
   when: slapd_pki|d() and slapd_pki | bool and not (slapd_register_tls_cert_search.stdout is search("olcTLSCertificateFile:"))
 
 - name: Configure TLS certificates (first time only)
-  ansible.builtin.command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f {{ slapd_register_tempdir.stdout|d() + "/configure_tlscerts.ldif" }}'
-  when: slapd_pki|d() and slapd_pki | bool and not (slapd_register_tls_cert_search.stdout is search("olcTLSCertificateFile:"))
+  ansible.builtin.command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f {{ slapd_register_tempdir.stdout | d() + "/configure_tlscerts.ldif" }}'
+  when: slapd_pki | d() and slapd_pki | bool and not (slapd_register_tls_cert_search.stdout is search("olcTLSCertificateFile:"))
 
 - name: Configure TLS certificates
   community.general.ldap_attrs:
