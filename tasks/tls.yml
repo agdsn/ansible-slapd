@@ -7,7 +7,7 @@
     append: true
     state: 'present'
   notify: ['Restart slapd']
-  when: slapd_pki|d() and slapd_pki | bool
+  when: slapd_pki | d() and slapd_pki | bool
 
 - name: Check if TLS certificate is configured
   ansible.builtin.shell: ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config -s base 'olcTLSCertificateFile=*' olcTLSCertificateFile
@@ -35,7 +35,12 @@
   ansible.builtin.service:
     name: 'slapd'
     state: 'restarted'
-  when: slapd_pki|d() and slapd_pki | bool and not (slapd_register_tls_cert_search.stdout is search("olcTLSCertificateFile:"))
+  when: >
+    slapd_pki | d()
+    and slapd_pki | bool
+    and not (
+      slapd_register_tls_cert_search.stdout is search("olcTLSCertificateFile:")
+    )
 
 - name: Configure TLS certificates (first time only)
   ansible.builtin.command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f {{ slapd_register_tempdir.stdout | d() + "/configure_tlscerts.ldif" }}'
@@ -51,4 +56,4 @@
       olcTLSDHParamFile: '{{ slapd_dhparam_file }}'
       olcTLSCipherSuite: '{{ slapd_pki_ciphers }}'
     state: 'exact'
-  when: slapd_pki|d() and slapd_pki | bool
+  when: slapd_pki | d() and slapd_pki | bool

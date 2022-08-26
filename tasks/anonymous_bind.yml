@@ -7,7 +7,7 @@
       olcDisallows: 'bind_anon'
       olcRequires: 'authc'
     state: 'absent'
-  when: slapd_anonymous_bind|bool
+  when: slapd_anonymous_bind | bool
 
 - name: Allow anonymous bind (frontend)
   community.general.ldap_attrs:
@@ -15,7 +15,7 @@
     attributes:
       olcRequires: 'authc'
     state: 'absent'
-  when: slapd_anonymous_bind|bool
+  when: slapd_anonymous_bind | bool
 
 - name: Deny anonymous bind, require authentication
   community.general.ldap_attrs:
@@ -24,7 +24,7 @@
       olcDisallows: 'bind_anon'
       olcRequires: 'authc'
     state: 'exact'
-  when: not slapd_anonymous_bind|bool
+  when: not slapd_anonymous_bind | bool
 
 - name: Deny anonymous bind, require authentication (frontend)
   community.general.ldap_attrs:
@@ -32,4 +32,4 @@
     attributes:
       olcRequires: 'authc'
     state: 'exact'
-  when: not slapd_anonymous_bind|bool
+  when: not slapd_anonymous_bind | bool
