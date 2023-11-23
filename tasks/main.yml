@@ -71,8 +71,6 @@
 
 - name: Set up replication
   ansible.builtin.import_tasks: replication.yml
-- name: Set up password policy
-  ansible.builtin.import_tasks: ppolicy.yml
 - name: Set up LDAP memberof groups
   ansible.builtin.import_tasks: memberof.yml
 
