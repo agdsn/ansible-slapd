@@ -1,0 +1,25 @@
+---
+- name: Configure ppolicy module
+  ldap_attr_ext:
+    dn: 'cn=module{0},cn=config'
+    name: 'olcModuleLoad'
+    values: 'ppolicy'
+    state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
+    indexed: true
+
+- name: Configure ppolicy overlay
+  ldap_entry_ext:
+    dn: 'olcOverlay=ppolicy,olcDatabase={1}{{ slapd_backend }},cn=config'
+    objectClass:
+      - 'olcOverlayConfig'
+      - 'olcPPolicyConfig'
+    attributes:
+      olcOverlay: 'ppolicy'
+      olcPPolicyDefault: 'cn=ppolicy,ou=policies,{{ slapd_basedn }}'
+      olcPPolicyHashCleartext: 'FALSE'
+      olcPPolicyUseLockout: 'FALSE'
+      olcPPolicyForwardUpdates: 'FALSE'
+    state: "{{ 'present' if slapd_ppolicy else 'absent' }}"
+    indexed: true
+    indexed_after:
+      - 'syncprov'
