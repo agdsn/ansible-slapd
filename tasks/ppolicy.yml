@@ -1,10 +1,4 @@
 ---
-- name: Load ppolicy schema
-  ansible.builtin.command: load-ldap-schema /etc/ldap/schema/ppolicy.ldif
-  register: slapd_register_load_schema
-  when: slapd_ppolicy
-  changed_when: slapd_register_load_schema.stdout != ""
-
 - name: Configure ppolicy module
   ldap_attr_ext:
     dn: 'cn=module{0},cn=config'
